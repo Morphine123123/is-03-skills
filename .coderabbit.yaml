@@ -1,0 +1,242 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# CodeRabbit config for auto-grading workshop Day 3 PRs
+# Place this file in the ROOT of the Excalidraw fork repository.
+
+language: "uk-UA"
+# max 250 chars (CodeRabbit schema)
+tone_instructions: "Ментор Agent Skills воркшопу. Відповідь українською: добрий тон, але вимогливо. Пропуски пояснюй. Статуси: ✅ ок, ⚠️ частково, ❌ ні."
+
+early_access: false
+
+reviews:
+  profile: "assertive"
+  request_changes_workflow: false
+  high_level_summary: true
+  high_level_summary_placeholder: "@coderabbitai summary"
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  changed_files_summary: true
+  sequence_diagrams: false
+
+  auto_review:
+    enabled: true
+    drafts: true
+    auto_incremental_review: true
+    auto_pause_after_reviewed_commits: 0
+    base_branches:
+      - ".*"
+    ignore_title_keywords:
+      - "WIP"
+      - "[skip review]"
+    ignore_usernames:
+      - "dependabot[bot]"
+      - "renovate[bot]"
+      - "github-actions[bot]"
+
+  # ── File filters ──────────────────────────────────────────────
+  path_filters:
+    - ".cursor/skills/**"
+    - ".agents/skills/**"
+    - "AGENTS.md"
+    - "docs/skill-testing/**"
+    - "docs/skill-testing.md"
+    - "!node_modules/**"
+    - "!dist/**"
+    - "!build/**"
+    - "!coverage/**"
+    - "!*.lock"
+    - "!package-lock.json"
+    - "!yarn.lock"
+    - "!**/*.snap"
+    - "!**/*.min.js"
+    - "!**/*.min.css"
+
+  # ── Path-specific review instructions ─────────────────────────
+  path_instructions:
+    - path: ".cursor/skills/*/SKILL.md"
+      instructions: |
+        Це SKILL.md файл Agent Skill — завдання День 3.
+        Перевір:
+        1. Файл має YAML frontmatter з обов'язковими полями:
+           - `name` — 1-64 символи, lowercase, hyphens, збігається з назвою директорії
+           - `description` — 1-1024 символи, описує ЩО скіл робить і КОЛИ його використовувати
+        2. Тіло містить конкретні інструкції, специфічні для Excalidraw (не generic)
+        3. Інструкції структуровані: "When to use", кроки, приклади
+        4. Якщо є scripts/ або references/ — вони згадуються в тілі SKILL.md
+        5. SKILL.md не перевищує 500 рядків (якщо більше — рекомендуй винести в references/)
+        Оціни: ✅ конкретний, добре структурований / ⚠️ занадто загальний або довгий / ❌ порожній або невалідний.
+
+    - path: ".agents/skills/*/SKILL.md"
+      instructions: |
+        Це крос-інструментальний Agent Skill у .agents/skills/ — завдання День 3.
+        Перевір:
+        1. Файл має валідний YAML frontmatter з `name` і `description`
+        2. `name` збігається з назвою батьківської директорії
+        3. Інструкції конкретні та корисні для Excalidraw
+        4. Скіл працюватиме в будь-якому сумісному агенті (Cursor, Claude Code, Copilot тощо)
+        5. НЕ використовує Cursor-специфічні фічі (наприклад, посилання на .cursor/rules/)
+        Оціни: ✅ портативний і корисний / ⚠️ містить tool-specific інструкції / ❌ невалідний.
+
+    - path: ".cursor/skills/*/scripts/**"
+      instructions: |
+        Це скрипт Agent Skill — завдання День 3.
+        Перевір:
+        1. Скрипт виконує конкретну корисну задачу для Excalidraw
+        2. Скрипт самодостатній або чітко документує залежності
+        3. Має корисні повідомлення про помилки
+        4. Обробляє edge cases (відсутній node_modules, немає файлів тощо)
+        5. Згадується у відповідному SKILL.md
+        Оціни: ✅ корисний і надійний / ⚠️ неповний або без обробки помилок / ❌ порожній.
+
+    - path: ".agents/skills/*/scripts/**"
+      instructions: |
+        Це скрипт крос-інструментального Agent Skill — завдання День 3.
+        Перевір ті ж критерії, що й для .cursor/skills/*/scripts/**:
+        1. Скрипт виконує конкретну корисну задачу
+        2. Самодостатній з чіткими залежностями
+        3. Корисні повідомлення про помилки
+        4. Обробляє edge cases
+        5. Згадується у SKILL.md
+        Додатково: скрипт не повинен залежати від Cursor-специфічних шляхів.
+        Оціни: ✅ портативний і корисний / ⚠️ tool-specific або неповний / ❌ порожній.
+
+    - path: ".cursor/skills/*/references/**"
+      instructions: |
+        Це reference-файл Agent Skill — завдання День 3.
+        Перевір:
+        1. Файл містить конкретну документацію, специфічну для Excalidraw
+        2. Файл сфокусований на одній темі (не мега-документ)
+        3. Згадується у відповідному SKILL.md через відносний шлях
+        4. Додає цінність, яку не можна помістити в основний SKILL.md без перевищення ліміту
+        Оціни: ✅ сфокусований і корисний / ⚠️ занадто загальний або дублює SKILL.md / ❌ порожній.
+
+    - path: ".agents/skills/*/references/**"
+      instructions: |
+        Це reference-файл крос-інструментального Agent Skill — завдання День 3.
+        Перевір ті ж критерії, що й для .cursor/skills/*/references/**:
+        1. Конкретна документація для Excalidraw
+        2. Сфокусований на одній темі
+        3. Згадується у SKILL.md
+        4. Додає цінність
+        Додатково: не містить tool-specific посилань.
+        Оціни: ✅ портативний і корисний / ⚠️ tool-specific або надлишковий / ❌ порожній.
+
+    - path: "AGENTS.md"
+      instructions: |
+        Це AGENTS.md — обов'язковий файл завдання День 3.
+        Перевір наявність та якість таких секцій:
+        1. Project Overview — суть проєкту Excalidraw (2-5 речень)
+        2. Tech Stack — React, TypeScript, Vite, Yarn workspaces, Vitest
+        3. Project Structure — опис monorepo layout (packages/, excalidraw-app/)
+        4. Key Commands — yarn build, yarn test, yarn start тощо
+        5. Architecture — основні компоненти, state management, rendering
+        6. Conventions — naming, code style, PR workflow
+        7. Skills — перелік і опис доступних Agent Skills (НОВА секція для День 3)
+        Мінімум 5 з 7 секцій мають бути присутні та заповнені.
+        Обов'язково має бути секція "Skills" з описом створених скілів.
+        Якщо файл < 30 рядків — ⚠️ занадто поверхневий.
+        Перевір, що факти відповідають реальному Excalidraw (yarn, не npm/pnpm).
+
+    - path: "docs/skill-testing/**"
+      instructions: |
+        Це документ тестування Agent Skill — завдання День 3.
+        Перевір:
+        1. Описано, який скіл тестувався
+        2. Описано тестовий сценарій (промпт або задача для AI)
+        3. Результат з скілом — що AI згенерував
+        4. Результат без скілу — що AI згенерував без SKILL.md
+        5. Висновок — яка різниця, чи скіл працює
+        6. Обидва результати конкретні (не "було погано, стало добре")
+        Якщо немає обох результатів — ❌.
+        Якщо висновок формальний без конкретики — ⚠️.
+
+    - path: "docs/skill-testing.md"
+      instructions: |
+        Це документ тестування Agent Skill — завдання День 3.
+        Перевір:
+        1. Описано, який скіл тестувався
+        2. Описано тестовий сценарій (промпт або задача для AI)
+        3. Результат з скілом — що AI згенерував
+        4. Результат без скілу — що AI згенерував без SKILL.md
+        5. Висновок — яка різниця, чи скіл працює
+        6. Обидва результати конкретні (не "було погано, стало добре")
+        Якщо немає обох результатів — ❌.
+        Якщо висновок формальний без конкретики — ⚠️.
+
+  # ── Pre-merge checks (grading criteria) ───────────────────────
+  pre_merge_checks:
+    title:
+      mode: "warning"
+      requirements: >
+        PR title should follow the format: "Day 3: <participant-name> — Workshop Assignment"
+        or similar descriptive format in Ukrainian or English.
+
+    description:
+      mode: "warning"
+
+    custom_checks:
+      - mode: "warning"
+        name: "Minimum 3 skills in .agents/skills/"
+        instructions: >
+          Check that the PR includes at least 3 skill directories with valid SKILL.md files
+          in the `.agents/skills/` directory. Skills may also exist in `.cursor/skills/`
+          but the primary location must be `.agents/skills/` for cross-tool portability.
+          Each SKILL.md must contain:
+          1. Valid YAML frontmatter with `name` (lowercase, hyphens, 1-64 chars) and `description` (non-empty, 1-1024 chars)
+          2. `name` must match the parent directory name
+          3. Markdown body with concrete instructions specific to Excalidraw
+          4. Should NOT reference Cursor-specific features (like .cursor/rules/ paths)
+          Skills should be specific to Excalidraw project (not generic "write clean code").
+          PASS if 3+ valid SKILL.md files exist in .agents/skills/ with substantive content.
+          FAIL if fewer than 3 skills in .agents/skills/, or SKILL.md files have invalid frontmatter or are empty.
+
+      - mode: "warning"
+        name: "At least one skill with scripts"
+        instructions: >
+          Check that at least one skill directory (in `.agents/skills/` or `.cursor/skills/`)
+          contains a `scripts/` subdirectory with at least one executable script file
+          (`.sh`, `.py`, `.js`, `.ts`).
+          The script must perform a useful, concrete task relevant to Excalidraw development.
+          The script must be referenced in the parent skill's SKILL.md.
+          PASS if at least one skill has scripts/ with a substantive script referenced in SKILL.md.
+          FAIL if no skill has scripts/, or scripts are empty/placeholder.
+
+      - mode: "warning"
+        name: "At least one skill with references"
+        instructions: >
+          Check that at least one skill directory (in `.agents/skills/` or `.cursor/skills/`)
+          contains a `references/` subdirectory with at least one Markdown reference file.
+          The reference must contain focused documentation specific to Excalidraw.
+          The reference must be mentioned/linked in the parent skill's SKILL.md.
+          PASS if at least one skill has references/ with substantive docs linked from SKILL.md.
+          FAIL if no skill has references/, or references are empty/placeholder.
+
+      - mode: "warning"
+        name: "Skill test documentation"
+        instructions: >
+          Check that the PR includes at least one skill test document.
+          Look in `docs/skill-testing/` directory or `docs/skill-testing.md` file.
+          The document must contain ALL of these:
+          1. Which skill was tested
+          2. Test scenario (the prompt or task given to AI)
+          3. Result WITH the skill — what AI generated
+          4. Result WITHOUT the skill (SKILL.md removed/renamed)
+          5. Conclusion — what difference the skill made
+          PASS if document exists with all 5 elements present.
+          FAIL if document is missing, or lacks both test results, or has no conclusion.
+
+      - mode: "warning"
+        name: "AGENTS.md with Skills section"
+        instructions: >
+          Check that the PR includes an AGENTS.md file in the repository root.
+          The file must contain at least 5 sections including a "Skills" section
+          that describes the available Agent Skills in the project.
+          The Skills section should list each skill with its name and purpose.
+          File should be at least 30 lines long.
+          PASS if AGENTS.md exists with 5+ filled sections including "Skills" and 30+ lines.
+          FAIL if file is missing, has fewer than 5 sections, or lacks a Skills section.
+
+chat:
+  auto_reply: true
