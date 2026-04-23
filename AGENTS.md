@@ -68,3 +68,6 @@ excalidraw-monorepo/
 Available skills in this project:
 
 - **creating-excalidraw-components** (`.agents/skills/`) — Create React components following Excalidraw's patterns and conventions
+- **creating-component-with-tdd** (`.agents/skills/`) — Create components with strict test-first TDD only when explicitly requested; falls back to default component flow when use cases are missing
+- **working-with-action-manager** (`.agents/skills/`) — Add and modify actions using Excalidraw's `actionManager` patterns, registration flow, and shortcut wiring
+- **code-review** (`.agents/skills/`) — Review branch or diff changes for bugs, regressions, and test gaps; uses prompt-specified base branch or defaults to `main`
