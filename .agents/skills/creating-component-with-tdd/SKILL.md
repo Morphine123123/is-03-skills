@@ -55,11 +55,6 @@ Do not force TDD scaffolding. Fall back to the default component flow:
 - Use `creating-excalidraw-components`.
 - Follow its standard implementation and baseline testing guidance.
 
-Do not force TDD scaffolding. Fall back to the default component flow:
-
-- Use `creating-excalidraw-components`.
-- Follow its standard implementation and baseline testing guidance.
-
 ## Implementation constraints after tests
 
 When moving from failing tests to implementation:

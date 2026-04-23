@@ -61,3 +61,27 @@ Write-Output "Changed files:"
 Write-Output ""
 Write-Output "Changed hunks (0 context):"
 & git diff --unified=0 --minimal "$mergeBase..HEAD"
+Write-Output ""
+Write-Output "Working tree status (porcelain):"
+$status = & git status --porcelain
+if (-not $status) {
+  Write-Output "(clean)"
+} else {
+  $status | ForEach-Object { Write-Output $_ }
+}
+Write-Output ""
+Write-Output "Working tree unstaged hunks (0 context):"
+$unstaged = & git diff --unified=0 --minimal
+if (-not $unstaged) {
+  Write-Output "(none)"
+} else {
+  $unstaged | ForEach-Object { Write-Output $_ }
+}
+Write-Output ""
+Write-Output "Working tree staged hunks (0 context):"
+$staged = & git diff --cached --unified=0 --minimal
+if (-not $staged) {
+  Write-Output "(none)"
+} else {
+  $staged | ForEach-Object { Write-Output $_ }
+}
