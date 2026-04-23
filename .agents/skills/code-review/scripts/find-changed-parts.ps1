@@ -17,15 +17,25 @@ if (-not $repoRoot) {
 
 # Ensure base branch ref can be resolved locally or via origin.
 $resolvedBase = $BaseBranch
+$originRef = "origin/$BaseBranch"
 & git rev-parse --verify --quiet $resolvedBase | Out-Null
 if ($LASTEXITCODE -ne 0) {
-  $originRef = "origin/$BaseBranch"
   & git rev-parse --verify --quiet $originRef | Out-Null
   if ($LASTEXITCODE -eq 0) {
     $resolvedBase = $originRef
   } else {
     Write-Error "Base branch '$BaseBranch' not found locally or on origin."
     exit 1
+  }
+}
+
+# If reviewing local commits on the base branch itself (e.g. on main),
+# compare against origin/<base> to include local ahead commits.
+$currentBranch = git rev-parse --abbrev-ref HEAD
+if ($currentBranch -eq $BaseBranch -and $resolvedBase -eq $BaseBranch) {
+  & git rev-parse --verify --quiet $originRef | Out-Null
+  if ($LASTEXITCODE -eq 0) {
+    $resolvedBase = $originRef
   }
 }
 
@@ -37,6 +47,14 @@ if (-not $mergeBase) {
 
 Write-Output "Review base branch: $resolvedBase"
 Write-Output "Merge base: $mergeBase"
+Write-Output ""
+Write-Output "Commits in current branch (newest first):"
+$commits = & git log --oneline "$mergeBase..HEAD"
+if (-not $commits) {
+  Write-Output "(none)"
+} else {
+  $commits | ForEach-Object { Write-Output $_ }
+}
 Write-Output ""
 Write-Output "Changed files:"
 & git diff --name-status "$mergeBase..HEAD"
